@@ -30,15 +30,13 @@ add_subdirectory(Common)
 add_subdirectory(ContinuousColorMapping)
 #add_subdirectory(AppDimensionalityReduction)
 
-install(PROGRAMS ../scripts/sen2agri_common.py
-              ../scripts/split_shapefile.py
-        DESTINATION usr/lib/python2.7/site-packages/)
-
 install(FILES ../scripts/insert_l2a_product_to_db.py
               ../scripts/delete_site.py
               ../scripts/job_operations.py
               ../sen2agri-ctl/sen2agri-ctl.py
               ../scripts/filter_site_download_tiles.py
+              ../scripts/sen2agri_common.py
+              ../scripts/split_shapefile.py
         DESTINATION bin/)
 
 
