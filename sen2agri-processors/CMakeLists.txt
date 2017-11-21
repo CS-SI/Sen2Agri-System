@@ -6,6 +6,14 @@ include(CTest)
 
 find_package(OTB REQUIRED)
 
+find_package(GSL)
+
+if (NOT GSL_FOUND)
+    message(WARNING "GSL is not found, VegetationStatus code will be deactivated")
+    set(SEN2AGRI_HAS_GSL_SUPPORT ${GSL_FOUND})
+endif()
+
+
 include(${OTB_USE_FILE})
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wno-missing-field-initializers -flto -mno-avx -O3")
@@ -23,7 +31,9 @@ add_subdirectory(MACCSMetadata)
 add_subdirectory(Composite)
 add_subdirectory(CropType)
 add_subdirectory(CropMask)
-add_subdirectory(VegetationStatus)
+if (SEN2AGRI_HAS_GSL_SUPPORT)
+    add_subdirectory(VegetationStatus)
+endif()
 add_subdirectory(DEM-WB)
 add_subdirectory(CreateFootprint)
 add_subdirectory(Common)
