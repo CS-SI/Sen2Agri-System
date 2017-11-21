@@ -176,7 +176,7 @@ COARSE_RES="240"
 SIGMA_SMALL_CLD="2"
 SIGMA_LARGE_CLD="10"
 
-WEIGHT_DATE_MIN="0.10"
+WEIGHT_DATE_MIN="0.5"
 
 outWeights = outDir + '/L3AResult#_weights.tif'
 outDates = outDir + '/L3AResult#_dates.tif'
