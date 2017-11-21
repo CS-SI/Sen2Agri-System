@@ -41,8 +41,4 @@ install(FILES ../scripts/insert_l2a_product_to_db.py
               ../scripts/filter_site_download_tiles.py
         DESTINATION bin/)
 
-install(FILES dist/sen2agri-disable-thp.conf
-        DESTINATION usr/lib/tmpfiles.d)
 
-install(FILES dist/50-open-files.conf
-        DESTINATION etc/security/limits.d)
