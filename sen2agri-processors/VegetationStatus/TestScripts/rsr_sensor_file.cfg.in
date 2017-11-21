@@ -1,0 +1,13 @@
+#-----------------------------------------------------------------------------
+#
+# rsr_sensor_file.cfg - Configuration file which link sensor to corresponding 
+#                       rsr file.
+#
+# This file is configured by cmake to replace the location of the rsr file
+
+SPOT4#HRVIR1=@CMAKE_INSTALL_PREFIX@/share/sen2agri/spot4hrvir1.rsr
+SPOT5#HRG1=@CMAKE_INSTALL_PREFIX@/share/sen2agri/spot5hrg1.rsr
+SPOT5#HRG2=@CMAKE_INSTALL_PREFIX@/share/sen2agri/spot5hrg2.rsr
+LANDSAT_8=@CMAKE_INSTALL_PREFIX@/share/sen2agri/landsat8_7b.rsr
+SENTINEL-2A=@CMAKE_INSTALL_PREFIX@/share/sen2agri/Sentinel2_real.rsr
+SENTINEL-2B=@CMAKE_INSTALL_PREFIX@/share/sen2agri/Sentinel2_real.rsr
