@@ -177,6 +177,7 @@ parser.add_argument('--bandsmap', help="Bands mapping file location", required=T
 parser.add_argument('--scatteringcoef', help="Scattering coefficient file. This file is requested in S2 case ONLY", required=False)
 parser.add_argument('--tileid', help="Tile id", required=False)
 parser.add_argument('--siteid', help='The site ID', required=False)
+parser.add_argument('--lut', help="Lookup table", required=False)
 
 USE_COMPRESSION=True
 REMOVE_TEMP=False
@@ -238,6 +239,7 @@ outFlags = outDir + '/L3AResult#_flags.tif'
 outRGB = outDir + '/L3AResult#_rgb.tif'
 
 fullScatCoeffs=""
+fullLut=""
 tileID="TILE_none"
 
 if os.path.exists(outDir):
@@ -255,6 +257,9 @@ if args.scatteringcoef:
     scatteringCoefFilename = args.scatteringcoef[args.scatteringcoef.rfind('/'):]
     fullScatCoeffs = outDir + scatteringCoefFilename
     print(fullScatCoeffs)
+
+if args.lut:
+    fullLut = args.lut
 
 if args.tileid:
     tileID = "TILE_{}".format(args.tileid)
@@ -482,7 +487,8 @@ runCmd(["otbcli", "ProductFormatter",
     "-processor.composite.dates", tileID, out_d, 
     "-processor.composite.rgb", tileID, out_rgb, 
     "-il"] + inputList + [
-    "-gipp", paramsFilenameXML])
+    "-gipp", paramsFilenameXML,
+    "-lut", args.lut])
 
 if REMOVE_TEMP:
     counterString = str(i)
