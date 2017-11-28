@@ -20,7 +20,6 @@
 #include "itkObjectFactory.h"
 
 #include "MetadataHelper.h"
-#include <vector>
 #include <memory>
 
 class MetadataHelperFactory : public itk::LightObject
