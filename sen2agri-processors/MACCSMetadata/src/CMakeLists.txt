@@ -11,6 +11,7 @@ set(MACCSMetadata_HEADERS
     ../include/MACCSMetadataReader.hpp
     ../include/MACCSMetadataWriter.hpp
     ../include/SPOT4MetadataReader.hpp
+    ../include/THEIAMetadataReader.hpp
     ../include/TileMetadataWriter.hpp
     ../include/ProductMetadataWriter.hpp
     ../include/ViewingAngles.hpp
@@ -25,6 +26,7 @@ set(MACCSMetadata_SOURCES
     TileMetadataWriter.cpp
     ProductMetadataWriter.cpp
     SPOT4MetadataReader.cpp
+    THEIAMetadataReader.cpp
     ViewingAngles.cpp
     MetadataUtil.cpp)
 

@@ -3,6 +3,7 @@
   * Program:      Sen2agri-Processors
   * Language:     C++
   * Copyright:    2015-2016, CS Romania, office@c-s.ro
+  * Copyright:    2017, CS SI
   * See COPYRIGHT file for details.
   *
   * Unless required by applicable law or agreed to in writing, software
@@ -16,6 +17,7 @@
 #include "MetadataHelperFactory.h"
 #include "Spot4MetadataHelper.h"
 #include "MACCSMetadataHelper.h"
+#include "TheiaMetadataHelper.h"
 
 std::unique_ptr<MetadataHelper> MetadataHelperFactory::GetMetadataHelper(const std::string& metadataFileName, int nResolution)
 {
@@ -26,6 +28,10 @@ std::unique_ptr<MetadataHelper> MetadataHelperFactory::GetMetadataHelper(const s
     std::unique_ptr<MetadataHelper> maccsMetadataHelper(new MACCSMetadataHelper);
     if (maccsMetadataHelper->LoadMetadataFile(metadataFileName, nResolution))
         return maccsMetadataHelper;
+
+    std::unique_ptr<MetadataHelper> theiaMetadataHelper(new TheiaMetadataHelper);
+    if (theiaMetadataHelper->LoadMetadataFile(metadataFileName, nResolution))
+        return theiaMetadataHelper;
 
     itkExceptionMacro("Unable to read metadata from " << metadataFileName);
 

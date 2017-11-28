@@ -1,5 +1,6 @@
 set(MetadataHelper_HEADERS
     MACCSMetadataHelper.h
+    TheiaMetadataHelper.h
     MetadataHelperFactory.h
     MetadataHelper.h
     Spot4MetadataHelper.h
@@ -13,6 +14,7 @@ set(MetadataHelper_SOURCES
     MetadataHelper.cpp
     MetadataHelperFactory.cpp
     Spot4MetadataHelper.cpp
+    TheiaMetadataHelper.cpp
     MACCSMetadataHelper.cpp
     BandsCfgMappingParser.cpp)
 
