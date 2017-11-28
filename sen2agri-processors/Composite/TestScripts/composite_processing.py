@@ -129,16 +129,32 @@ args = parser.parse_args()
 
 syntDate = args.syntdate
 syntHalf = args.synthalf
+
+inputList=[]
+
+if args.inputdir:
+    inputDir = args.inputdir
+    satellite = args.satellite
+    instrument = args.instrument
+    orbitDay=""
+    if args.orbitday:
+        orbitDay = args.orbitday
+    inputList, t0, tend = generateCompositeParam(inputDir, copy.copy(syntDate), int(syntHalf), satellite, instrument, orbitDay)
+else:
+	inputList = args.input
+	t0=0
+	tend=1
+
 resolution = args.res
 bandsMap = args.bandsmap
 appLocation = args.applocation
 outDir = args.outdir
 
 siteId = "nn"
-multisatelites = areMultiMissionFiles(args.input)
+multisatelites = areMultiMissionFiles(inputList)
 firstMasterFile = ""
 if multisatelites :
-    firstMasterFile = getFirstMasterFile(args.input, bandsMap)
+    firstMasterFile = getFirstMasterFile(inputList, bandsMap)
     print("MULTI mission products found!")
 else :
     print("SINGLE mission products found!")
@@ -223,7 +239,7 @@ with open(paramsFilenameXML, 'w') as paramsFileXML:
     ET.SubElement(dates, "synthesis_half").text = syntHalf
     usedXMLs = ET.SubElement(root, "XML_files")
     i = 0
-    for xml in args.input:
+    for xml in inputList:
         ET.SubElement(usedXMLs, "XML_" + str(i)).text = xml
         i += 1
     paramsFileXML.write(prettify(root))
@@ -247,7 +263,7 @@ with open(paramsFilename, 'w') as paramsFile:
     paramsFile.write("    synthesis half    = " + syntHalf + "\n")
     paramsFile.write(" ")
     paramsFile.write("Used XML files\n")
-    for xml in args.input:
+    for xml in inputList:
         paramsFile.write("  " + xml + "\n")
 
 prevL3A=[]
@@ -255,7 +271,7 @@ i = 0
 
 print("Processing started: " + str(datetime.datetime.now()))
 start = time.time()
-for xml in args.input:
+for xml in inputList:
 
     runCmd(["otbcli", "MaskHandler",
             appLocation,
@@ -432,7 +448,7 @@ runCmd(["otbcli", "ProductFormatter",
     "-processor.composite.flags", tileID, out_f, 
     "-processor.composite.dates", tileID, out_d, 
     "-processor.composite.rgb", tileID, out_rgb, 
-    "-il"] + args.input + [
+    "-il"] + inputList + [
     "-gipp", paramsFilenameXML] + 
     fullLut)
 
