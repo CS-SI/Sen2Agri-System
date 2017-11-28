@@ -15,21 +15,13 @@
  
 #include "otbWrapperApplication.h"
 #include "otbWrapperApplicationFactory.h"
-#include "otbBandMathImageFilter.h"
-#include "otbMultiToMonoChannelExtractROI.h"
+
 #include "otbImage.h"
 #include "otbVectorImage.h"
 #include "otbImageFileReader.h"
-#include "otbVectorImageToImageListFilter.h"
-#include "otbImageListToVectorImageFilter.h"
-
-#include "itkBinaryFunctorImageFilter.h"
 
 #include "MaskExtractorFilter.hxx"
 
-#include <vector>
-#include "libgen.h"
-#include "MaskHandlerFunctor.h"
 #include "MetadataHelperFactory.h"
 
 namespace otb
@@ -51,30 +43,24 @@ public:
 
     itkTypeMacro(MaskHandler, otb::Application)
  
-    typedef otb::ImageFileReader<Int16VectorImageType>                          ReaderType;
-    typedef otb::ImageList<Int16ImageType>                                      ImageListType;
-    typedef ImageListToVectorImageFilter<ImageListType, Int16VectorImageType >  ListConcatenerFilterType;
-    typedef MaskHandlerFunctor <Int16VectorImageType::PixelType,
-                                    Int16VectorImageType::PixelType, Int16VectorImageType::PixelType> MaskHandlerFunctorType;
+    typedef otb::ImageFileReader<Int16VectorImageType>  ReaderType;
 
-    typedef itk::BinaryFunctorImageFilter< Int16VectorImageType, Int16VectorImageType,
-                                            Int16VectorImageType, MaskHandlerFunctorType > FunctorFilterType;
-
-    typedef otb::MaskExtractorFilter<Int16VectorImageType, Int16VectorImageType> MaskExtractorFilterType;
+    typedef otb::MaskExtractorFilter<Int16VectorImageType,
+                                     Int16VectorImageType>
+                                                        MaskExtractorFilterType;
 
 private:
 
     void DoInit()
     {
         SetName("MaskHandler");
-        SetDescription("Extracts Cloud, Water and Snow masks from _div.tif and _sat.tif SPOT files ");
+        SetDescription("Extracts Cloud, Water and Snow masks from input products ");
 
         SetDocName("MaskHandler");
-        SetDocLongDescription("long description");
+        SetDocLongDescription("TODO: long description");
         SetDocLimitations("None");
         SetDocAuthors("AG");
         SetDocSeeAlso(" ");        
-        AddDocTag(Tags::Vector);        
         AddParameter(ParameterType_String, "xml", "General xml input file for L2A");
         AddParameter(ParameterType_Int, "sentinelres", "Resolution for which the masks sould be handled, SENTINEL-S2 only");
         MandatoryOff("sentinelres");
@@ -91,13 +77,15 @@ private:
     void DoExecute()
     {
         const std::string &inXml = GetParameterAsString("xml");
-        auto factory = MetadataHelperFactory::New();
 
         int resolution = 10;
         if(HasValue("sentinelres")) {
             resolution = GetParameterInt("sentinelres");
         }
+
+        auto factory = MetadataHelperFactory::New();
         auto pHelper = factory->GetMetadataHelper(inXml, resolution);
+
         std::string missionName = pHelper->GetMissionName();
         if((missionName.find(SENTINEL_MISSION_STR) != std::string::npos) &&
            !HasValue("sentinelres")) {
@@ -107,6 +95,7 @@ private:
         m_MaskExtractor = MaskExtractorFilterType::New();
         m_ReaderCloud = ReaderType::New();
         m_ReaderWaterSnow = ReaderType::New();
+
         if(missionName.find(SPOT4_MISSION_STR) != std::string::npos ||
                 (missionName.find(SPOT5_MISSION_STR) != std::string::npos)) {
             m_MaskExtractor->SetBitsMask(0, 1, 2);
@@ -130,8 +119,7 @@ private:
 
     ReaderType::Pointer                 m_ReaderCloud;
     ReaderType::Pointer                 m_ReaderWaterSnow ;
-    MaskHandlerFunctorType          m_Functor;
-    MaskExtractorFilterType::Pointer             m_MaskExtractor;
+    MaskExtractorFilterType::Pointer    m_MaskExtractor;
 };
 
 }
