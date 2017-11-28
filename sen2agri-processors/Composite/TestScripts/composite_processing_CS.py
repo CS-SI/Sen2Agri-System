@@ -185,7 +185,7 @@ args = parser.parse_args()
 
 syntDate = args.syntdate
 syntHalf = args.synthalf
-print(syntDate)
+
 inputList=[]
 
 if args.inputdir:
@@ -200,7 +200,7 @@ else:
 	inputList = args.input
 	t0=0
 	tend=1
-print(syntDate)
+
 resolution = args.res
 bandsMap = args.bandsmap
 outDir = args.outdir
