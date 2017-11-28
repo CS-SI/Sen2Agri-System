@@ -50,6 +50,8 @@ protected:
     
     std::unique_ptr<THEIAMetadata> m_metadata;
 
+    std::string getCloudFileName();
+    std::string getWaterFileName();
 };
 
 #endif // THEIAMETADATAHELPER_H

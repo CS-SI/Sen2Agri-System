@@ -17,31 +17,30 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
-struct THEIAFiles
+struct THEIADatasetIdentification
 {
-    std::string MTD_ALL;
-    std::string QLK_ALL;
+    std::string Authority;
+    std::string Project;
+    std::string Producer;
+};
+
+typedef std::map<std::string, std::string> THEIAMask;
+
+struct THEIAProductOrganisation
+{
+    std::string QLK;
     std::vector<std::string> SRE;
     std::vector<std::string> FRE;
-    std::string ATB_R1;
-    std::string ATB_R2;
-    std::string MASK_EDG_R1;
-    std::string MASK_EDG_R2;
-    std::string MASK_SAT_R1;
-    std::string MASK_SAT_R2;
-    std::string MASK_CLM_R1;
-    std::string MASK_CLM_R2;
-    std::string MASK_MG2_R1;
-    std::string MASK_MG2_R2;
-    std::string MASK_IAO_R1;
-    std::string MASK_IAO_R2;
+    std::map<std::string, THEIAMask> MASKS;
+
 };
 
 struct THEIAMetadata
 {
-    std::string MissionName;
-    THEIAFiles Files;
+    THEIADatasetIdentification datasetIdentification;
+    THEIAProductOrganisation productOrganisation;
 };
 
 

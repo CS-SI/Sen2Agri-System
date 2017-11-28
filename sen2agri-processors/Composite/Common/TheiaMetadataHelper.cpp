@@ -27,7 +27,9 @@ bool TheiaMetadataHelper::DoLoadMetadata()
     THEIAMetadataReaderType::Pointer theiaMetadataReader = THEIAMetadataReaderType::New();
 
     if (m_metadata = theiaMetadataReader->ReadMetadata(m_inputMetadataFileName)) {
-        m_Mission = m_metadata->MissionName;
+        m_Mission = m_metadata->datasetIdentification.Project;
+        m_CloudFileName = this->getCloudFileName();
+        m_WaterFileName = this->getWaterFileName();
         return true;
     }
 
@@ -49,4 +51,14 @@ TheiaMetadataHelper::GetMasksImage( MasksFlagType nMaskFlags,
     std::vector< MetadataHelper::SingleBandShortImageType::Pointer> vecImgs;
     
     return vecImgs.front();
+}
+
+std::string TheiaMetadataHelper::getCloudFileName()
+{
+    return buildFullPath(m_metadata->productOrganisation.MASKS.find("Cloud")->second.find("R1")->second);
+}
+
+std::string TheiaMetadataHelper::getWaterFileName()
+{
+    return buildFullPath(m_metadata->productOrganisation.MASKS.find("Cloud_Shadow")->second.find("R1")->second);
 }

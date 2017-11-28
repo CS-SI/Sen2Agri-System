@@ -27,41 +27,107 @@ std::unique_ptr<THEIAMetadata> THEIAMetadataReader::ReadMetadata(const std::stri
     }
 
     auto metadata = this->ReadMetadataXml(doc);
-    
+
     return metadata;
 }
 
-
-std::string ReadFixedHeader(const TiXmlElement *el)
+THEIADatasetIdentification ReadDatasetIdentification(const TiXmlElement *el)
 {
-    std::string result;
+    THEIADatasetIdentification result;
 
     if (!el) {
         return result;
     }
 
-    result = GetChildText(el, "AUTHORITY");
-    
+    result.Authority = GetChildText(el, "AUTHORITY");
+    result.Project = GetChildText(el, "PROJECT");
+    result.Producer = GetChildText(el, "PRODUCER");
+
     return result;
 }
 
+std::map<std::string, THEIAMask> ReadMasks(const TiXmlElement *el)
+{
+    std::map<std::string, THEIAMask> result;
+
+    if (!el) {
+        return result;
+    }
+
+    for (   auto maskEl = el->FirstChildElement("Mask");
+            maskEl;
+            maskEl = maskEl->NextSiblingElement("Mask")) {
+
+        auto maskProperties = maskEl->FirstChildElement("Mask_Properties");
+
+        std::string nature = GetChildText(maskProperties, "NATURE");
+        //std::cout << "Nature: " << nature << std::endl;
+
+        auto maskListEl = maskEl->FirstChildElement("Mask_File_List");
+
+        THEIAMask masks;
+
+        for (   auto maskFileEl = maskListEl->FirstChildElement("MASK_FILE");
+                maskFileEl;
+                maskFileEl = maskFileEl->NextSiblingElement("MASK_FILE")) {
+            std::string maskFile = maskFileEl->GetText();
+            //std::cout << maskFile << std::endl;
+            std::string groupId;
+            maskFileEl->QueryValueAttribute("group_id", &groupId);
+            //std::cout << groupId << std::endl;
+
+            masks[groupId] = maskFile;
+        }
+        result[nature] = masks;
+    }
+
+    //for ( const auto &pair : result) {
+        //std::cout << pair.first << ": [ " ;
+        //for ( const auto &pair2 : pair.second) {
+            //std::cout << pair2.first << ":" << pair2.second << ", ";
+        //}
+        //std::cout << "]" << std::endl;
+    //}
+
+    return result;
+}
+
+THEIAProductOrganisation ReadProductOrganisation(const TiXmlElement *el)
+{
+    std::cout << "ReadProductOrganisation" << std::endl;
+
+    THEIAProductOrganisation result;
+
+    if (!el) {
+        return result;
+    }
+
+    auto muscateEl = el->FirstChildElement("Muscate_Product");
+
+    result.QLK = GetChildText(muscateEl, "QUICKLOOK");
+
+    result.MASKS = ReadMasks(muscateEl->FirstChildElement("Mask_List"));
+
+    return result;
+}
 
 std::unique_ptr<THEIAMetadata> THEIAMetadataReader::ReadMetadataXml(const TiXmlDocument &doc)
 {
     TiXmlHandle hDoc(const_cast<TiXmlDocument *>(&doc));
-    
+
     auto rootElement = hDoc.FirstChildElement("Muscate_Metadata_Document").ToElement();
 
     if (!rootElement) {
         return nullptr;
     }
 
+    auto theiaMetadata = std::unique_ptr<THEIAMetadata>(new THEIAMetadata);
 
-    auto file = std::unique_ptr<THEIAMetadata>(new THEIAMetadata);
-    
-    file->MissionName = ReadFixedHeader(rootElement->FirstChildElement("Dataset_Identification"));
-    
-    return file;
+    theiaMetadata->datasetIdentification = ReadDatasetIdentification(rootElement->FirstChildElement("Dataset_Identification"));
+
+    theiaMetadata->productOrganisation = ReadProductOrganisation(rootElement->FirstChildElement("Product_Organisation"));
+
+    return theiaMetadata;
 }
 
 }
