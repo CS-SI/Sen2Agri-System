@@ -190,7 +190,6 @@ outDates = outDir + '/L3AResult#_dates.tif'
 outRefls = outDir + '/L3AResult#_refls.tif'
 outFlags = outDir + '/L3AResult#_flags.tif'
 outRGB = outDir + '/L3AResult#_rgb.tif'
-shapeFile = outDir + '/ClippingShape.shp'
 
 fullScatCoeffs=[]
 fullLut=[]
