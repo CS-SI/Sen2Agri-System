@@ -191,8 +191,8 @@ outRefls = outDir + '/L3AResult#_refls.tif'
 outFlags = outDir + '/L3AResult#_flags.tif'
 outRGB = outDir + '/L3AResult#_rgb.tif'
 
-fullScatCoeffs=[]
-fullLut=[]
+fullScatCoeffs=""
+fullLut=""
 tileID="TILE_none"
 
 if os.path.exists(outDir):
@@ -208,13 +208,12 @@ shutil.copyfile(bandsMap, os.path.join(outDir, os.path.basename(bandsMap)))
 if args.scatteringcoef:
     shutil.copyfile(args.scatteringcoef, os.path.join(outDir, os.path.basename(args.scatteringcoef)))
     scatteringCoefFilename = args.scatteringcoef[args.scatteringcoef.rfind('/'):]
-    fullScatCoeffs = ["-scatcoef", outDir + scatteringCoefFilename]
+    fullScatCoeffs = outDir + scatteringCoefFilename
     print(fullScatCoeffs)
 
 if args.lut:
-    fullLut = ["-lut", args.lut]
-    print(fullLut)
-    
+    fullLut = args.lut
+
 if args.tileid:
     tileID = "TILE_{}".format(args.tileid)
 
@@ -296,7 +295,8 @@ for xml in inputList:
                 appLocation,
                 "-xml", xml,
                 "-bmap", bandsMap,
-                "-res", resolution] + fullScatCoeffs + [
+                "-res", resolution,
+                "-scatcoef", fullScatCoeffs,
                 "-msk", outSpotMasks,
                 "-outres", outImgBands,
                 "-outcmres", outCld,
@@ -309,7 +309,8 @@ for xml in inputList:
                 appLocation,
                "-xml", xml,
                "-bmap", bandsMap,
-               "-res", resolution] + fullScatCoeffs + [
+               "-res", resolution,
+               "-scatcoef", fullScatCoeffs,
                "-msk", outSpotMasks,
                "-outres", outImgBands,
                "-outcmres", outCld,
@@ -448,8 +449,8 @@ runCmd(["otbcli", "ProductFormatter",
     "-processor.composite.dates", tileID, out_d, 
     "-processor.composite.rgb", tileID, out_rgb, 
     "-il"] + inputList + [
-    "-gipp", paramsFilenameXML] + 
-    fullLut)
+    "-gipp", paramsFilenameXML,
+    "-lut", args.lut])
 
 if REMOVE_TEMP:
     counterString = str(i)
