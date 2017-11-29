@@ -124,6 +124,7 @@ bool MACCSMetadataHelper::DoLoadMetadata()
         }
 
         m_Mission = m_metadata->Header.FixedHeader.Mission;
+        m_ProducerName = m_metadata->Header.FixedHeader.SourceSystem;
         m_ReflQuantifVal = std::stod(m_metadata->ProductInformation.ReflectanceQuantificationValue);
         if(m_ReflQuantifVal < 1) {
             m_ReflQuantifVal = (1 / m_ReflQuantifVal);

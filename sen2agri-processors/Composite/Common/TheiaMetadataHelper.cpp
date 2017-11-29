@@ -28,6 +28,7 @@ bool TheiaMetadataHelper::DoLoadMetadata()
 
     if (m_metadata = theiaMetadataReader->ReadMetadata(m_inputMetadataFileName)) {
         m_Mission = m_metadata->datasetIdentification.Project;
+        m_ProducerName = m_metadata->datasetIdentification.Producer;
         m_CloudFileName = this->getCloudFileName();
         m_WaterFileName = this->getWaterFileName();
         return true;

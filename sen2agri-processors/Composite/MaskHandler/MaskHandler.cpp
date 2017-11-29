@@ -101,7 +101,12 @@ private:
             m_MaskExtractor->SetBitsMask(0, 1, 2);
         } else if ((missionName.find(LANDSAT_MISSION_STR) != std::string::npos) ||
                    (missionName.find(SENTINEL_MISSION_STR) != std::string::npos)) {
-            m_MaskExtractor->SetBitsMask(0, 0, 5);
+            std::string producerName = pHelper->GetProducerName();
+            std::cout << producerName << std::endl;
+            if (producerName.compare("MACCS") == 0)
+                m_MaskExtractor->SetBitsMask(0, 0, 5);
+            else if (producerName.compare("MUSCATE") == 0)
+                m_MaskExtractor->SetBitsMask(0, 0, 2);
         } else {
             itkExceptionMacro("Unknown mission: " + missionName);
         }

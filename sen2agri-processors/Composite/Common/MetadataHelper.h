@@ -67,6 +67,7 @@ public:
     // GENETAL FIELDS API
     virtual std::string GetMissionName() { return m_Mission; }
     virtual std::string GetInstrumentName() { return m_Instrument; }
+    virtual std::string GetProducerName() {return m_ProducerName;}
 
     // MAIN RASTER API
     virtual std::string GetImageFileName() { return m_ImageFileName; }
@@ -138,6 +139,7 @@ protected:
 protected:
     std::string m_Mission;
     std::string m_Instrument;
+    std::string m_ProducerName;
 
     std::string m_AotFileName;
     std::string m_CloudFileName;
