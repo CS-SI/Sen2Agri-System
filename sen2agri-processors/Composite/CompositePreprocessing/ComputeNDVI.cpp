@@ -52,7 +52,6 @@ ComputeNDVI::OutputImageType::Pointer ComputeNDVI::DoExecute()
     m_Functor->SetInput(m_InputImageReader->GetOutput());
     m_Functor->UpdateOutputInformation();
 
-    //WriteToOutputFile();
     if(m_nResolution != curRes) {
         float fMultiplicationFactor = ((float)curRes)/m_nResolution;
         return m_ResampledBandsExtractor.getResampler(m_Functor->GetOutput(), fMultiplicationFactor)->GetOutput();
@@ -60,28 +59,3 @@ ComputeNDVI::OutputImageType::Pointer ComputeNDVI::DoExecute()
         return m_Functor->GetOutput();
     }
 }
-
-void ComputeNDVI::WriteToOutputFile()
-{
-    std::string outFileName("OUT_FILE_NAME.tif");
-    WriterType::Pointer writer;
-    writer = WriterType::New();
-    writer->SetFileName(outFileName);
-    if(m_nResolution == 20) {
-        float fMultiplicationFactor = 0.5f;
-        writer->SetInput(m_ResampledBandsExtractor.getResampler(m_Functor->GetOutput(), fMultiplicationFactor)->GetOutput());
-    } else {
-        writer->SetInput(m_Functor->GetOutput());
-    }
-    try
-    {
-        writer->Update();
-    }
-    catch (itk::ExceptionObject& err)
-    {
-        std::cout << "ExceptionObject caught !" << std::endl;
-        std::cout << err << std::endl;
-        itkExceptionMacro("Error writing output");
-    }
-}
-
