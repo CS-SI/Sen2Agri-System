@@ -40,7 +40,6 @@ public:
     typedef otb::Wrapper::FloatVectorImageType                    ImageType1;
     typedef float                                                 PixelType;
     typedef otb::Image<PixelType, 2>                              ImageType2;
-    //typedef DirectionalCorrectionFilter<InputImageType, InputImageType >    DirectionalCorrectionFilterType;
 
 private:
 
