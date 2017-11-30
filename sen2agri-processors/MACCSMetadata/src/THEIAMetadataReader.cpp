@@ -143,8 +143,6 @@ std::map<std::string, THEIAImg> ReadImages(const TiXmlElement *el)
 
 THEIAProductOrganisation ReadProductOrganisation(const TiXmlElement *el)
 {
-    std::cout << "ReadProductOrganisation" << std::endl;
-
     THEIAProductOrganisation result;
 
     if (!el) {
@@ -158,6 +156,16 @@ THEIAProductOrganisation ReadProductOrganisation(const TiXmlElement *el)
     result.IMGS = ReadImages(muscateEl->FirstChildElement("Image_List"));
 
     result.MASKS = ReadMasks(muscateEl->FirstChildElement("Mask_List"));
+
+    return result;
+}
+
+THEIAProductCharacteristics ReadProductCharacteristics(const TiXmlElement *el)
+{
+    THEIAProductCharacteristics result;
+
+    result.AcquisitionDate = GetChildText(el, "ACQUISITION_DATE");
+    result.Platform = GetChildText(el,"PLATFORM");
 
     return result;
 }
@@ -177,6 +185,8 @@ std::unique_ptr<THEIAMetadata> THEIAMetadataReader::ReadMetadataXml(const TiXmlD
     theiaMetadata->datasetIdentification = ReadDatasetIdentification(rootElement->FirstChildElement("Dataset_Identification"));
 
     theiaMetadata->productOrganisation = ReadProductOrganisation(rootElement->FirstChildElement("Product_Organisation"));
+
+    theiaMetadata->productCharacteristics = ReadProductCharacteristics(rootElement->FirstChildElement("Product_Characteristics"));
 
     return theiaMetadata;
 }

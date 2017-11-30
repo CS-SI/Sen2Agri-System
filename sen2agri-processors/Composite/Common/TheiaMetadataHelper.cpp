@@ -29,6 +29,11 @@ bool TheiaMetadataHelper::DoLoadMetadata()
     if (m_metadata = theiaMetadataReader->ReadMetadata(m_inputMetadataFileName)) {
         m_Mission = m_metadata->datasetIdentification.Project;
         m_ProducerName = m_metadata->datasetIdentification.Producer;
+        std::string acquisitionDate = m_metadata->productCharacteristics.AcquisitionDate;
+        acquisitionDate.erase(7,1);
+        acquisitionDate.erase(4,1);
+        m_AcquisitionDate = acquisitionDate.substr(0,acquisitionDate.find("T"));
+        m_Instrument = m_metadata->productCharacteristics.Platform;
         m_CloudFileName = this->getCloudFileName();
         m_WaterFileName = this->getWaterFileName();
         m_ImageFileName = this->getImageFileName();

@@ -112,6 +112,14 @@ private:
 
     // weight on sensor parameters
     std::string missionName = pHelper->GetMissionName();
+
+    // Mange THEIA case
+    if ( missionName.compare("SENTINEL2") == 0 ) {
+        std::string instrumentName = pHelper->GetInstrumentName();
+        instrumentName.insert(8,"-");
+        std::cout << instrumentName << std::endl;
+        missionName = instrumentName;
+    }
     m_totalWeightComputation.SetMissionName(missionName);
 
     // weight on date parameters

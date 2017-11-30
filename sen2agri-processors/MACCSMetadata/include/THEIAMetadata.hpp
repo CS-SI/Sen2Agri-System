@@ -40,10 +40,23 @@ struct THEIAProductOrganisation
 
 };
 
+struct THEIAProductCharacteristics
+{
+    std::string ProductID;
+    std::string AcquisitionDate;
+    std::string ProductionDate;
+    std::string ProductVersion;
+    std::string ProductLevel;
+    std::string Platform;
+    int OrbitNumber;
+};
+
+
 struct THEIAMetadata
 {
     THEIADatasetIdentification datasetIdentification;
     THEIAProductOrganisation productOrganisation;
+    THEIAProductCharacteristics productCharacteristics;
 };
 
 
