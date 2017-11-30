@@ -52,6 +52,8 @@ protected:
 
     std::string getCloudFileName();
     std::string getWaterFileName();
+    std::string getImageFileName();
+    std::string getAotFileName();
 };
 
 #endif // THEIAMETADATAHELPER_H

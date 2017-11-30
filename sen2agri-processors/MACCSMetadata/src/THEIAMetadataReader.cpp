@@ -92,6 +92,55 @@ std::map<std::string, THEIAMask> ReadMasks(const TiXmlElement *el)
     return result;
 }
 
+std::map<std::string, THEIAImg> ReadImages(const TiXmlElement *el)
+{
+    std::map<std::string, THEIAImg> result;
+
+    if (!el) {
+        return result;
+    }
+
+    for (   auto imageEl = el->FirstChildElement("Image");
+            imageEl;
+            imageEl = imageEl->NextSiblingElement("Image")) {
+
+        auto maskProperties = imageEl->FirstChildElement("Image_Properties");
+
+        std::string nature = GetChildText(maskProperties, "NATURE");
+
+        auto imgListEl = imageEl->FirstChildElement("Image_File_List");
+
+        THEIAImg images;
+
+        for (   auto imgFileEl = imgListEl->FirstChildElement("IMAGE_FILE");
+                imgFileEl;
+                imgFileEl = imgFileEl->NextSiblingElement("IMAGE_FILE")) {
+            std::string imageFile = imgFileEl->GetText();
+            if (nature.compare("Aerosol_Optical_Thickness") == 0  || nature.compare("Water_Vapor_Content") == 0 ) {
+                std::string groupId;
+                imgFileEl->QueryValueAttribute("group_id", &groupId);
+                images[groupId] = imageFile;
+            }
+            else {
+                std::string bandId;
+                imgFileEl->QueryValueAttribute("band_id", &bandId);
+                images[bandId] = imageFile;
+            }
+        }
+        result[nature] = images;
+    }
+
+    //for ( const auto &pair : result) {
+        //std::cout << pair.first << ": [ " ;
+        //for ( const auto &pair2 : pair.second) {
+            //std::cout << pair2.first << ":" << pair2.second << ", ";
+        //}
+        //std::cout << "]" << std::endl;
+    //}
+
+    return result;
+}
+
 THEIAProductOrganisation ReadProductOrganisation(const TiXmlElement *el)
 {
     std::cout << "ReadProductOrganisation" << std::endl;
@@ -105,6 +154,8 @@ THEIAProductOrganisation ReadProductOrganisation(const TiXmlElement *el)
     auto muscateEl = el->FirstChildElement("Muscate_Product");
 
     result.QLK = GetChildText(muscateEl, "QUICKLOOK");
+
+    result.IMGS = ReadImages(muscateEl->FirstChildElement("Image_List"));
 
     result.MASKS = ReadMasks(muscateEl->FirstChildElement("Mask_List"));
 

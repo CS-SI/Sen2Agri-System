@@ -31,6 +31,11 @@ bool TheiaMetadataHelper::DoLoadMetadata()
         m_ProducerName = m_metadata->datasetIdentification.Producer;
         m_CloudFileName = this->getCloudFileName();
         m_WaterFileName = this->getWaterFileName();
+        m_ImageFileName = this->getImageFileName();
+        m_AotFileName = this->getAotFileName();
+        m_nAotBandIndex = 2; // start from 1 (1 = Water wapor)
+        m_fAotQuantificationValue = 0.005; // 1/200
+        m_fAotNoDataVal = 0;
         return true;
     }
 
@@ -62,4 +67,20 @@ std::string TheiaMetadataHelper::getCloudFileName()
 std::string TheiaMetadataHelper::getWaterFileName()
 {
     return buildFullPath(m_metadata->productOrganisation.MASKS.find("Cloud_Shadow")->second.find("R1")->second);
+}
+
+std::string TheiaMetadataHelper::getImageFileName()
+{
+    THEIAImg theiaImg = m_metadata->productOrganisation.IMGS.find("Flat_Reflectance")->second;
+    std::string theiaImgB2 = theiaImg.find("B2")->second;
+    std::string theiaVRT = theiaImgB2;
+    //SENTINEL2A_20170909-063507-461_L2A_T40KCB_D_V1-4_FRE_B2.tif
+    //SENTINEL2A_20170909-063507-461_L2A_T40KCB_D_V1-4_FRE.vrt
+    theiaVRT.replace(theiaImgB2.find("_B2.tif"),theiaImgB2.find("_B2.tif")+6,".vrt");
+    return buildFullPath(theiaVRT);
+}
+
+std::string TheiaMetadataHelper::getAotFileName()
+{
+    return buildFullPath(m_metadata->productOrganisation.IMGS.find("Aerosol_Optical_Thickness")->second.find("R1")->second);
 }

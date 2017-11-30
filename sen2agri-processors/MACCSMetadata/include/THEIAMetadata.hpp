@@ -27,12 +27,15 @@ struct THEIADatasetIdentification
 };
 
 typedef std::map<std::string, std::string> THEIAMask;
+typedef THEIAMask THEIAImg;
 
 struct THEIAProductOrganisation
 {
     std::string QLK;
-    std::vector<std::string> SRE;
-    std::vector<std::string> FRE;
+    std::vector<std::string> SREs;
+    std::vector<std::string> FREs;
+    std::string FREvrt;
+    std::map<std::string, THEIAImg> IMGS;
     std::map<std::string, THEIAMask> MASKS;
 
 };
