@@ -38,6 +38,11 @@ bool TheiaMetadataHelper::DoLoadMetadata()
         m_WaterFileName = this->getWaterFileName();
         m_ImageFileName = this->getImageFileName();
         m_AotFileName = this->getAotFileName();
+
+        m_nAbsRedBandIndex = 3;
+        m_nAbsGreenBandIndex = 2;
+        m_nAbsBlueBandIndex = 1;
+        //m_nAbsNirBandIndex = 4 or 8;
         m_nAotBandIndex = 2; // start from 1 (1 = Water wapor)
         m_fAotQuantificationValue = 0.005; // 1/200
         m_fAotNoDataVal = 0;
