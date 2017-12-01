@@ -13,6 +13,8 @@
 
  =========================================================================*/
  
+#define _XOPEN_SOURCE
+
 #include "MetadataHelper.h"
 #include <time.h>
 #include <ctime>
