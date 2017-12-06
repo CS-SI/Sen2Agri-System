@@ -123,9 +123,20 @@ private:
 
     	unsigned int nbBands = cL2ARefl->GetNumberOfComponentsPerPixel();
 
+    	FloatVectorImageType::Pointer pL3AWeight;
+    	FloatVectorImageType::Pointer pL3ADates;
+    	FloatVectorImageType::Pointer pL3ARefl;
+    	FloatVectorImageType::Pointer pL3AFlag;
+        bool l3aprovided = false;
 
-
-
+        if(HasValue("pl3aw") && HasValue("pl3ad") &&
+           HasValue("pl3arefl") && HasValue("pl3aflag")) {
+        	l3aprovided = true;
+        	pL3AWeight = GetParameterFloatVectorImage("pl3aw");
+        	pL3ADates = GetParameterFloatVectorImage("pl3ad");
+        	pL3ARefl = GetParameterFloatVectorImage("pl3arefl");
+        	pL3AFlag = GetParameterFloatVectorImage("pl3aflag");
+        }
 
         m_concat1->SetInput1(cL2ARefl);
         m_concat1->SetInput2(cL2ACSMask);
@@ -145,12 +156,35 @@ private:
         m_concat6->SetInput1(m_concat5->GetOutput());
         m_concat6->SetInput2(cL2AEDGMask);
 
+    	// Add previous L3A informations if available
+    	if ( l3aprovided ) {
+    		// Add previous L3A reflectances
+            m_concat7->SetInput1(m_concat6->GetOutput());
+            m_concat7->SetInput2(pL3ARefl);
+
+            m_concat8->SetInput1(m_concat7->GetOutput());
+            m_concat8->SetInput2(pL3AWeight);
+
+            m_concat9->SetInput1(m_concat8->GetOutput());
+            m_concat9->SetInput2(pL3ADates);
+
+            m_concat10->SetInput1(m_concat9->GetOutput());
+            m_concat10->SetInput2(pL3AFlag);
+
+    	}
+
         // Perform the update
 
         m_UpdateSynthesisFilter->SetDuration(GetParameterInt("duration"));
         m_UpdateSynthesisFilter->SetBlueBandIdx(GetParameterInt("bluebandidx"));
         m_UpdateSynthesisFilter->SetNbBandsRefl(nbBands);
-        m_UpdateSynthesisFilter->SetInput(m_concat6->GetOutput());
+        if ( l3aprovided ) {
+        	m_UpdateSynthesisFilter->SetInput(m_concat10->GetOutput());
+        }
+        else {
+        	m_UpdateSynthesisFilter->SetInput(m_concat6->GetOutput());
+        }
+
 
         // Split the filter output into the different output (which contain 2*nbbands + 2)
         m_UpdateSynthesisFilter->UpdateOutputInformation();
@@ -200,6 +234,10 @@ private:
 	ConcatenateFilterType::Pointer  m_concat4;
 	ConcatenateFilterType::Pointer  m_concat5;
 	ConcatenateFilterType::Pointer  m_concat6;
+	ConcatenateFilterType::Pointer  m_concat7;
+	ConcatenateFilterType::Pointer  m_concat8;
+	ConcatenateFilterType::Pointer  m_concat9;
+	ConcatenateFilterType::Pointer  m_concat10;
 
     ExtractMultiFilterType::Pointer m_outL3AReflExtractor;
     ExtractMultiFilterType::Pointer m_outL3AWeightExtractor;
