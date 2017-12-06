@@ -15,8 +15,6 @@
 
 #include "otbWrapperApplication.h"
 #include "otbWrapperApplicationFactory.h"
-#include "otbBandMathImageFilter.h"
-#include "otbMultiToMonoChannelExtractROI.h"
 
 #include "otbImage.h"
 #include "otbVectorImage.h"
@@ -345,71 +343,6 @@ private:
         return reader;
     }
 
-/*
-    typedef otb::ImageList<otb::ImageList<otb::VectorImage<short, 2> > >          InternalImageListType;
-    typedef otb::Image<short, 2>                                                OutImageType1;
-    typedef otb::ImageList<OutImageType1>                                       OutputImageListType;
-    typedef otb::VectorImageToImageListFilter<OutImageType, OutputImageListType>   VectorImageToImageListType;
-
-
-    typedef otb::ImageList<OutImageType1>  ImgListType;
-    typedef otb::VectorImage<short, 2>                                        ImageType;
-    typedef otb::ImageListToVectorImageFilter<ImgListType, ImageType>       ImageListToVectorImageFilterType;
-
-
-    void splitOutputs() {
-        weightList = ImgListType::New();
-        reflectancesList = ImgListType::New();
-        datesList = ImgListType::New();
-        flagsList = ImgListType::New();
-        allList = ImgListType::New();
-
-        std::ostream & objOstream = std::cout;
-        m_imgSplit = VectorImageToImageListType::New();
-        m_functorOutput = m_UpdateSynthesisFunctor->GetOutput();
-        m_functorOutput->UpdateOutputInformation();
-        m_UpdateSynthesisFunctor->InPlaceOn();
-        m_functorOutput->Print(objOstream);
-        m_imgSplit->SetInput(m_functorOutput);
-        m_imgSplit->UpdateOutputInformation();
-        m_imgSplit->GetOutput()->UpdateOutputInformation();
-        m_imgSplit->Print(objOstream);
-        std::cout << m_imgSplit->GetNumberOfOutputs() << std::endl;
-
-        int nL3AReflBandsNo = m_Functor.GetNbOfL3AReflectanceBands();
-        int nCurBand = 0;
-        for(int i = 0; i<nL3AReflBandsNo; i++, nCurBand++) {
-            weightList->PushBack(m_imgSplit->GetOutput()->GetNthElement(nCurBand));
-        }
-
-        datesList->PushBack(m_imgSplit->GetOutput()->GetNthElement(nCurBand++));
-        for(int i = 0; i<nL3AReflBandsNo; i++, nCurBand++) {
-            reflectancesList->PushBack(m_imgSplit->GetOutput()->GetNthElement(nCurBand));
-        }
-        flagsList->PushBack(m_imgSplit->GetOutput()->GetNthElement(nCurBand++));
-
-        m_weightsConcat = ImageListToVectorImageFilterType::New();
-        m_weightsConcat->SetInput(weightList);
-        SetParameterOutputImagePixelType("outweights", ImagePixelType_int16);
-        SetParameterOutputImage("outweights", m_weightsConcat->GetOutput());
-
-        m_reflsConcat = ImageListToVectorImageFilterType::New();
-        m_reflsConcat->SetInput(reflectancesList);
-        m_reflsConcat->GetOutput()->CopyInformation(m_imgSplit->GetOutput()->GetNthElement(0));
-        //m_reflsConcat->GetOutput()->SetNumberOfComponentsPerPixel(m_imgSplit->GetOutput()->Size());
-        //m_reflsConcat->GetOutput()->SetLargestPossibleRegion(m_imgSplit->GetOutput()->GetNthElement(0)->GetLargestPossibleRegion());
-
-        SetParameterOutputImagePixelType("outrefls", ImagePixelType_int16);
-        SetParameterOutputImage("outrefls", m_reflsConcat->GetOutput());
-
-        //SetParameterOutputImagePixelType("outflags", ImagePixelType_int16);
-        //SetParameterOutputImage("outflags", m_allConcat->GetOutput());
-
-        //SetParameterOutputImagePixelType("outdates", ImagePixelType_int16);
-        //SetParameterOutputImage("outdates", m_allConcat->GetOutput());
-
-    }
-*/
     InputImageType::Pointer             m_L2AIn;
     InputImageType::Pointer             m_CSM, m_WM, m_SM, m_WeightsL2A;
     InputImageType::Pointer             m_PrevL3AWeight, m_PrevL3AAvgDate, m_PrevL3ARefl, m_PrevL3AFlags;
@@ -427,20 +360,6 @@ private:
 
     GenericRSImageResampler<InternalBandImageType, InternalBandImageType>  m_GenericRSImageResampler;
     ImageResampler<InternalBandImageType, InternalBandImageType>  m_ImageResampler;
-/*
-    VectorImageToImageListType::Pointer       m_imgSplit;
-    ImageListToVectorImageFilterType::Pointer m_allConcat;
-    ImageListToVectorImageFilterType::Pointer m_weightsConcat;
-    ImageListToVectorImageFilterType::Pointer m_reflsConcat;
-
-    ImgListType::Pointer allList;
-    ImgListType::Pointer weightList;
-    ImgListType::Pointer reflectancesList;
-    ImgListType::Pointer datesList;
-    ImgListType::Pointer flagsList;
-
-    OutImageType::Pointer m_functorOutput;
-*/
 };
 
 }
