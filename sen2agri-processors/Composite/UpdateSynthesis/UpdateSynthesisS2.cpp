@@ -114,7 +114,6 @@ private:
     // using BandMathFilter
     void DoExecute()
     {
-    	std::cout << "HERE" << std::endl;
     	FloatVectorImageType::Pointer cL2ARefl = GetParameterFloatVectorImage("cl2arefl");
     	FloatVectorImageType::Pointer cL2ACSMask = GetParameterFloatVectorImage("cl2acsm");
     	FloatVectorImageType::Pointer cL2AWMask = GetParameterFloatVectorImage("cl2awm");
@@ -123,12 +122,9 @@ private:
     	FloatVectorImageType::Pointer cL2AEDGMask = GetParameterFloatVectorImage("cl2aedg");
 
     	unsigned int nbBands = cL2ARefl->GetNumberOfComponentsPerPixel();
-    	ExtractMultiFilterType::InputImageType::RegionType  largestRegion = cL2ARefl->GetLargestPossibleRegion();
 
-        unsigned int sizeX = largestRegion.GetSize()[0];
-        unsigned int sizeY = largestRegion.GetSize()[1];
 
-        std::cout << sizeX << ":" << sizeX << std::endl;
+
 
 
         m_concat1->SetInput1(cL2ARefl);
@@ -162,25 +158,15 @@ private:
         FloatVectorImageType::Pointer outFilterImg = m_UpdateSynthesisFilter->GetOutput();
 
         unsigned int nbOutFilterBands = outFilterImg->GetNumberOfComponentsPerPixel();
-        ExtractMultiFilterType::InputImageType::RegionType  largestRegion2 = outFilterImg->GetLargestPossibleRegion();
-
-        unsigned int sizeX2 = largestRegion2.GetSize()[0];
-        unsigned int sizeY2 = largestRegion2.GetSize()[1];
-
-        std::cout << sizeX2 << ":" << sizeX2 << std::endl;
 
         std::cout << "Nb of output bands =" << nbOutFilterBands << " vs " << 2 * nbBands + 2 << std::endl;
 
         m_outL3AReflExtractor->SetInput( outFilterImg );
-        m_outL3AReflExtractor->SetSizeX(sizeX);
-        m_outL3AReflExtractor->SetSizeY(sizeY);
         m_outL3AReflExtractor->SetFirstChannel(1);
         m_outL3AReflExtractor->SetLastChannel(nbBands);
         m_outL3AReflExtractor->UpdateOutputInformation();
 
         m_outL3AWeightExtractor->SetInput( outFilterImg );
-        m_outL3AWeightExtractor->SetSizeX(sizeX);
-        m_outL3AWeightExtractor->SetSizeY(sizeY);
         m_outL3AWeightExtractor->SetFirstChannel(nbBands + 1);
         m_outL3AWeightExtractor->SetLastChannel(2*nbBands);
         m_outL3AWeightExtractor->UpdateOutputInformation();
@@ -188,20 +174,15 @@ private:
 
         m_outL3ADateExtractor->SetInput( outFilterImg );
         m_outL3ADateExtractor->SetChannel( 2*nbBands + 1  );
-        m_outL3ADateExtractor->SetSizeX(sizeX);
-        m_outL3ADateExtractor->SetSizeY(sizeY);
         m_outL3ADateExtractor->UpdateOutputInformation();
 
         m_outL3AFlagExtractor->SetInput( outFilterImg );
         m_outL3AFlagExtractor->SetChannel( 2*nbBands + 2 );
-        m_outL3AFlagExtractor->SetSizeX(sizeX);
-        m_outL3AFlagExtractor->SetSizeY(sizeY);
         m_outL3AFlagExtractor->UpdateOutputInformation();
 
         // Set outputs
-    	std::cout << "OUT1" << std::endl;
         SetParameterOutputImage("cl3arefl", m_outL3AReflExtractor->GetOutput());
-        std::cout << "OUT2" << std::endl;
+
         SetParameterOutputImage("cl3aw", m_outL3AWeightExtractor->GetOutput());
 
         SetParameterOutputImage("cl3ad", m_outL3ADateExtractor->GetOutput());
