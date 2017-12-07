@@ -87,7 +87,7 @@ private:
         MandatoryOff("pl3aflag");
 
         AddParameter(ParameterType_OutputImage, "cl3aw", "Current l3a weights");
-        AddParameter(ParameterType_OutputImage, "cl3ad", "Current l3a dates");
+        //AddParameter(ParameterType_OutputImage, "cl3ad", "Current l3a dates");
         AddParameter(ParameterType_OutputImage, "cl3arefl", "Current l3a reflectances");
         AddParameter(ParameterType_OutputImage, "cl3aflag", "Current l3a flags");
     }
@@ -148,28 +148,25 @@ private:
         m_concat3->SetInput2(cL2ASMask);
 
         m_concat4->SetInput1(m_concat3->GetOutput());
-        m_concat4->SetInput2(cL2ASMask);
+        m_concat4->SetInput2(cL2AWeight);
 
         m_concat5->SetInput1(m_concat4->GetOutput());
-        m_concat5->SetInput2(cL2AWeight);
-
-        m_concat6->SetInput1(m_concat5->GetOutput());
-        m_concat6->SetInput2(cL2AEDGMask);
+        m_concat5->SetInput2(cL2AEDGMask);
 
     	// Add previous L3A informations if available
     	if ( l3aprovided ) {
     		// Add previous L3A reflectances
+            m_concat6->SetInput1(m_concat5->GetOutput());
+            m_concat6->SetInput2(pL3ARefl);
+
             m_concat7->SetInput1(m_concat6->GetOutput());
-            m_concat7->SetInput2(pL3ARefl);
+            m_concat7->SetInput2(pL3AWeight);
 
             m_concat8->SetInput1(m_concat7->GetOutput());
-            m_concat8->SetInput2(pL3AWeight);
+            m_concat8->SetInput2(pL3ADates);
 
             m_concat9->SetInput1(m_concat8->GetOutput());
-            m_concat9->SetInput2(pL3ADates);
-
-            m_concat10->SetInput1(m_concat9->GetOutput());
-            m_concat10->SetInput2(pL3AFlag);
+            m_concat9->SetInput2(pL3AFlag);
 
     	}
 
@@ -178,11 +175,13 @@ private:
         m_UpdateSynthesisFilter->SetDuration(GetParameterInt("duration"));
         m_UpdateSynthesisFilter->SetBlueBandIdx(GetParameterInt("bluebandidx"));
         m_UpdateSynthesisFilter->SetNbBandsRefl(nbBands);
+
         if ( l3aprovided ) {
-        	m_UpdateSynthesisFilter->SetInput(m_concat10->GetOutput());
+        	m_UpdateSynthesisFilter->SetInput(m_concat9->GetOutput());
         }
         else {
-        	m_UpdateSynthesisFilter->SetInput(m_concat6->GetOutput());
+        	m_UpdateSynthesisFilter->SetInput(m_concat5->GetOutput());
+            m_UpdateSynthesisFilter->InitModeOn();
         }
 
 
@@ -193,7 +192,7 @@ private:
 
         unsigned int nbOutFilterBands = outFilterImg->GetNumberOfComponentsPerPixel();
 
-        std::cout << "Nb of output bands =" << nbOutFilterBands << " vs " << 2 * nbBands + 2 << std::endl;
+        std::cout << "Nb of output bands =" << nbOutFilterBands << " vs " << 3 * nbBands + 1 << std::endl;
 
         m_outL3AReflExtractor->SetInput( outFilterImg );
         m_outL3AReflExtractor->SetFirstChannel(1);
@@ -205,13 +204,13 @@ private:
         m_outL3AWeightExtractor->SetLastChannel(2*nbBands);
         m_outL3AWeightExtractor->UpdateOutputInformation();
 
-
-        m_outL3ADateExtractor->SetInput( outFilterImg );
-        m_outL3ADateExtractor->SetChannel( 2*nbBands + 1  );
-        m_outL3ADateExtractor->UpdateOutputInformation();
+//        m_outL3ADateExtractor->SetInput( outFilterImg );
+//        m_outL3ADateExtractor->SetFirstChannel(2*nbBands + 1);
+//        m_outL3ADateExtractor->SetLastChannel(3*nbBands);
+//        m_outL3ADateExtractor->UpdateOutputInformation();
 
         m_outL3AFlagExtractor->SetInput( outFilterImg );
-        m_outL3AFlagExtractor->SetChannel( 2*nbBands + 2 );
+        m_outL3AFlagExtractor->SetChannel( 3*nbBands + 1 );
         m_outL3AFlagExtractor->UpdateOutputInformation();
 
         // Set outputs
@@ -219,7 +218,7 @@ private:
 
         SetParameterOutputImage("cl3aw", m_outL3AWeightExtractor->GetOutput());
 
-        SetParameterOutputImage("cl3ad", m_outL3ADateExtractor->GetOutput());
+        //SetParameterOutputImage("cl3ad", m_outL3ADateExtractor->GetOutput());
 
         SetParameterOutputImagePixelType("cl3aflag", ImagePixelType_uint8);
         SetParameterOutputImage("cl3aflag", m_outL3AFlagExtractor->GetOutput());
@@ -237,7 +236,6 @@ private:
 	ConcatenateFilterType::Pointer  m_concat7;
 	ConcatenateFilterType::Pointer  m_concat8;
 	ConcatenateFilterType::Pointer  m_concat9;
-	ConcatenateFilterType::Pointer  m_concat10;
 
     ExtractMultiFilterType::Pointer m_outL3AReflExtractor;
     ExtractMultiFilterType::Pointer m_outL3AWeightExtractor;

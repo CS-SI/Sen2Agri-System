@@ -58,10 +58,57 @@ public:
   	m_Duration = duration;
   }
 
+  void InitModeOn()
+  {
+    m_InitMode = true;
+  }
+
   void SetNbBandsRefl(unsigned int nbBandsRefl)
   {
 	  m_NbBandsRefl = nbBandsRefl;
-	  m_OutputSize = 2 * m_NbBandsRefl + 2;
+	  m_OutputSize = 3 * m_NbBandsRefl + 1;
+	  m_FirstCurrentL2AReflIdx = 0;
+	  m_CloudMaskBandIndex = m_NbBandsRefl;
+	  m_WaterMaskBandIndex = m_CloudMaskBandIndex + 1;
+	  m_SnowMaskBandIndex = m_WaterMaskBandIndex + 1;
+	  m_WeightBandIndex = m_SnowMaskBandIndex + 1;
+	  m_EdgeMaskBandIndex = m_WeightBandIndex + 1;
+	  m_FirstPreviousL3AReflIdx = m_EdgeMaskBandIndex + 1;
+      m_FirstPreviousL3AWeightIdx = m_FirstPreviousL3AReflIdx + m_NbBandsRefl;
+      m_FirstPreviousL3ADatesIdx = m_FirstPreviousL3AWeightIdx + m_NbBandsRefl;
+      m_FirstPreviousL3AFlagIdx = m_FirstPreviousL3ADatesIdx + 1;
+
+      m_FirstNewL3AReflIdx = 0;
+      m_FirstNewL3AWeightIdx = m_NbBandsRefl;
+      m_FirstNewL3ADatesIdx = m_FirstNewL3AWeightIdx + m_NbBandsRefl;
+      m_FirstNewL3AFlagIdx = m_FirstNewL3ADatesIdx + m_NbBandsRefl;
+
+      std::cout << "m_FirstCurrentL2AReflIdx: " << m_FirstCurrentL2AReflIdx << std::endl;
+      std::cout << "m_CloudMaskBandIndex: " << m_CloudMaskBandIndex << std::endl;
+      std::cout << "m_WaterMaskBandIndex: " << m_WaterMaskBandIndex << std::endl;
+      std::cout << "m_SnowMaskBandIndex: " << m_SnowMaskBandIndex << std::endl;
+      std::cout << "m_WeightBandIndex: " << m_WeightBandIndex << std::endl;
+      std::cout << "m_EdgeMaskBandIndex: " << m_EdgeMaskBandIndex << std::endl;
+      std::cout << "m_FirstPreviousL3AReflIdx: " << m_FirstPreviousL3AReflIdx << std::endl;
+      std::cout << "m_FirstPreviousL3AWeightIdx: " << m_FirstPreviousL3AWeightIdx << std::endl;
+      std::cout << "m_FirstPreviousL3ADatesIdx: " << m_FirstPreviousL3ADatesIdx  << std::endl;
+      std::cout << "m_FirstPreviousL3AFlagIdx: " <<  m_FirstPreviousL3AFlagIdx << std::endl;
+      std::cout << "m_FirstNewL3AReflIdx: " << m_FirstNewL3AReflIdx << std::endl;
+      std::cout << "m_FirstNewL3AWeightIdx: " << m_FirstNewL3AWeightIdx << std::endl;
+      std::cout << "m_FirstNewL3ADatesIdx: " <<m_FirstNewL3ADatesIdx << std::endl;
+      std::cout << "m_FirstNewL3AFlagIdx: " << m_FirstNewL3AFlagIdx << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+//      std::cout << "" << << std::endl;
+
   }
 
   TOutput operator ()(const TInput& in) const;
@@ -72,7 +119,39 @@ private:
   int m_BlueBandIdx;
   unsigned int m_NbBandsRefl;
   unsigned int m_OutputSize;
+  unsigned int m_SnowMaskBandIndex;
+  unsigned int m_WaterMaskBandIndex;
+  unsigned int m_CloudMaskBandIndex;
+  unsigned int m_WeightBandIndex;
+  unsigned int m_EdgeMaskBandIndex;
+  unsigned int m_FirstCurrentL2AReflIdx;
+  unsigned int m_FirstPreviousL3AReflIdx;
+  unsigned int m_FirstPreviousL3AWeightIdx;
+  unsigned int m_FirstPreviousL3ADatesIdx;
+  unsigned int m_FirstPreviousL3AFlagIdx;
+  unsigned int m_FirstNewL3AReflIdx;
+  unsigned int m_FirstNewL3AWeightIdx;
+  unsigned int m_FirstNewL3ADatesIdx;
+  unsigned int m_FirstNewL3AFlagIdx;
+  bool m_InitMode;
+
+  bool IsLandPixel(const TInput & in) const;
+  bool IsSnowPixel(const TInput & in) const;
+  bool IsWaterPixel(const TInput & in) const;
+  bool IsCloudPixel(const TInput & in) const;
+  bool IsNoDataValue(const TInput & in) const;
+
+  OutputType HandleLandPixel(const TInput & in) const;
+  OutputType HandleSnowOrWaterPixel(const TInput & in) const;
+  OutputType HandleCloudOrShadowPixel(const TInput & in) const;
+
+  float GetPrevL3AWeightValue(const TInput & in, int offset) const;
+  float GetPrevL3ADatesValue(const TInput & in, int offset) const;
+  float GetPrevL3AReflValue(const TInput & in, int offset) const;
+  float GetPrevL3AFlagValue(const TInput & in) const;
+
 };
+
 }
 
 /** \class NCLSUnmixingImageFilter
@@ -128,6 +207,12 @@ public:
   {
       this->GetFunctor().SetNbBandsRefl(val);
       this->Modified();
+  }
+
+  void InitModeOn()
+  {
+    this->GetFunctor().InitModeOn();
+    this->Modified();
   }
 
 protected:
