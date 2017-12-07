@@ -75,13 +75,15 @@ public:
 	  m_EdgeMaskBandIndex = m_WeightBandIndex + 1;
 	  m_FirstPreviousL3AReflIdx = m_EdgeMaskBandIndex + 1;
       m_FirstPreviousL3AWeightIdx = m_FirstPreviousL3AReflIdx + m_NbBandsRefl;
-      m_FirstPreviousL3ADatesIdx = m_FirstPreviousL3AWeightIdx + m_NbBandsRefl;
-      m_FirstPreviousL3AFlagIdx = m_FirstPreviousL3ADatesIdx + 1;
+      //m_FirstPreviousL3ADatesIdx = m_FirstPreviousL3AWeightIdx + m_NbBandsRefl;
+      //m_FirstPreviousL3AFlagIdx = m_FirstPreviousL3ADatesIdx + 1;
+      m_FirstPreviousL3AFlagIdx = m_FirstPreviousL3AWeightIdx + 1;
 
       m_FirstNewL3AReflIdx = 0;
       m_FirstNewL3AWeightIdx = m_NbBandsRefl;
-      m_FirstNewL3ADatesIdx = m_FirstNewL3AWeightIdx + m_NbBandsRefl;
-      m_FirstNewL3AFlagIdx = m_FirstNewL3ADatesIdx + m_NbBandsRefl;
+      //m_FirstNewL3ADatesIdx = m_FirstNewL3AWeightIdx + m_NbBandsRefl;
+      //m_FirstNewL3AFlagIdx = m_FirstNewL3ADatesIdx + m_NbBandsRefl;
+      m_FirstNewL3AFlagIdx = m_FirstNewL3AWeightIdx + m_NbBandsRefl;
 
       std::cout << "m_FirstCurrentL2AReflIdx: " << m_FirstCurrentL2AReflIdx << std::endl;
       std::cout << "m_CloudMaskBandIndex: " << m_CloudMaskBandIndex << std::endl;

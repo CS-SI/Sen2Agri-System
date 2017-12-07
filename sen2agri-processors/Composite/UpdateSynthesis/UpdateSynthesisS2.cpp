@@ -16,10 +16,7 @@
 #include "otbWrapperApplication.h"
 #include "otbWrapperApplicationFactory.h"
 
-
-
 #include "otbConcatenateVectorImageFilter.h"
-
 #include "otbMultiChannelExtractROI.h"
 
 #include "UpdateSynthesisS2VectorImageFilter.h"
@@ -75,12 +72,12 @@ private:
         AddParameter(ParameterType_InputImage, "cl2aedg", "Current L2A Edge mask");
 
         AddParameter(ParameterType_Int, "bluebandidx", "Index of the blue band in the L2A and L3A reflectance");
-        AddParameter(ParameterType_Int, "duration", "Duration in days between current L2A date and the synthesis date");
+        //AddParameter(ParameterType_Int, "duration", "Duration in days between current L2A date and the synthesis date");
 
         AddParameter(ParameterType_InputImage, "pl3aw", "Previous l3a weights");
         MandatoryOff("pl3aw");
-        AddParameter(ParameterType_InputImage, "pl3ad", "Previous l3a dates");
-        MandatoryOff("pl3ad");
+        //AddParameter(ParameterType_InputImage, "pl3ad", "Previous l3a dates");
+        //MandatoryOff("pl3ad");
         AddParameter(ParameterType_InputImage, "pl3arefl", "Previous l3a reflectances");
         MandatoryOff("pl3arefl");
         AddParameter(ParameterType_InputImage, "pl3aflag", "Previous l3a flags");
@@ -110,8 +107,6 @@ private:
 
     }
 
-    // The algorithm consists in a applying a formula for computing the NDVI for each pixel,
-    // using BandMathFilter
     void DoExecute()
     {
     	FloatVectorImageType::Pointer cL2ARefl = GetParameterFloatVectorImage("cl2arefl");
@@ -163,21 +158,18 @@ private:
             m_concat7->SetInput2(pL3AWeight);
 
             m_concat8->SetInput1(m_concat7->GetOutput());
-            m_concat8->SetInput2(pL3ADates);
-
-            m_concat9->SetInput1(m_concat8->GetOutput());
-            m_concat9->SetInput2(pL3AFlag);
+            m_concat8->SetInput2(pL3AFlag);
 
     	}
 
         // Perform the update
 
-        m_UpdateSynthesisFilter->SetDuration(GetParameterInt("duration"));
+        //m_UpdateSynthesisFilter->SetDuration(GetParameterInt("duration"));
         m_UpdateSynthesisFilter->SetBlueBandIdx(GetParameterInt("bluebandidx"));
         m_UpdateSynthesisFilter->SetNbBandsRefl(nbBands);
 
         if ( l3aprovided ) {
-        	m_UpdateSynthesisFilter->SetInput(m_concat9->GetOutput());
+        	m_UpdateSynthesisFilter->SetInput(m_concat8->GetOutput());
         }
         else {
         	m_UpdateSynthesisFilter->SetInput(m_concat5->GetOutput());
@@ -192,7 +184,7 @@ private:
 
         unsigned int nbOutFilterBands = outFilterImg->GetNumberOfComponentsPerPixel();
 
-        std::cout << "Nb of output bands =" << nbOutFilterBands << " vs " << 3 * nbBands + 1 << std::endl;
+        std::cout << "Nb of output bands =" << nbOutFilterBands << " vs " << 2 * nbBands + 1 << std::endl;
 
         m_outL3AReflExtractor->SetInput( outFilterImg );
         m_outL3AReflExtractor->SetFirstChannel(1);
@@ -210,7 +202,7 @@ private:
 //        m_outL3ADateExtractor->UpdateOutputInformation();
 
         m_outL3AFlagExtractor->SetInput( outFilterImg );
-        m_outL3AFlagExtractor->SetChannel( 3*nbBands + 1 );
+        m_outL3AFlagExtractor->SetChannel( 2*nbBands + 1 );
         m_outL3AFlagExtractor->UpdateOutputInformation();
 
         // Set outputs
@@ -235,7 +227,6 @@ private:
 	ConcatenateFilterType::Pointer  m_concat6;
 	ConcatenateFilterType::Pointer  m_concat7;
 	ConcatenateFilterType::Pointer  m_concat8;
-	ConcatenateFilterType::Pointer  m_concat9;
 
     ExtractMultiFilterType::Pointer m_outL3AReflExtractor;
     ExtractMultiFilterType::Pointer m_outL3AWeightExtractor;
