@@ -97,6 +97,8 @@ private:
         m_concat4 = ConcatenateFilterType::New();
         m_concat5 = ConcatenateFilterType::New();
         m_concat6 = ConcatenateFilterType::New();
+        m_concat7 = ConcatenateFilterType::New();
+        m_concat8 = ConcatenateFilterType::New();
 
         m_UpdateSynthesisFilter = UpdateSynthesisS2FilterType::New();
 
@@ -119,16 +121,17 @@ private:
     	unsigned int nbBands = cL2ARefl->GetNumberOfComponentsPerPixel();
 
     	FloatVectorImageType::Pointer pL3AWeight;
-    	FloatVectorImageType::Pointer pL3ADates;
+    	//FloatVectorImageType::Pointer pL3ADates;
     	FloatVectorImageType::Pointer pL3ARefl;
     	FloatVectorImageType::Pointer pL3AFlag;
         bool l3aprovided = false;
 
-        if(HasValue("pl3aw") && HasValue("pl3ad") &&
+        if(HasValue("pl3aw")  &&
            HasValue("pl3arefl") && HasValue("pl3aflag")) {
         	l3aprovided = true;
+        	std::cout << "l3aprovided" << std::endl;
         	pL3AWeight = GetParameterFloatVectorImage("pl3aw");
-        	pL3ADates = GetParameterFloatVectorImage("pl3ad");
+        	//pL3ADates = GetParameterFloatVectorImage("pl3ad");
         	pL3ARefl = GetParameterFloatVectorImage("pl3arefl");
         	pL3AFlag = GetParameterFloatVectorImage("pl3aflag");
         }

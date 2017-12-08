@@ -172,7 +172,7 @@ TOutput UpdateSynthesisS2Functor<TInput,TOutput>::HandleLandPixel(const TInput &
     for (unsigned int i = 0; i < m_NbBandsRefl; ++i ) {
       typename OutputType::ComponentType prevWeight = GetPrevL3AWeightValue(in, i);
       typename OutputType::ComponentType newWeight = prevWeight + curWeight ;
-      out[m_FirstNewL3AReflIdx + i] = (prevWeight * GetPrevL3AReflValue(in, i) + curWeight * in[m_FirstCurrentL2AReflIdx+ i]) / newWeight;
+      out[m_FirstNewL3AReflIdx + i] = 10000.0 * ( (prevWeight * GetPrevL3AReflValue(in, i) + curWeight * (in[m_FirstCurrentL2AReflIdx+ i] / 10000.0)) / newWeight);
       out[m_FirstNewL3AWeightIdx + i] = 0.0; //(prevWeight * in[m_FirstPreviousL3ADatesIdx + i] + curWeight * m_Duration)/ newWeight;
       //out[m_FirstNewL3ADatesIdx + i] = newWeight;
     }

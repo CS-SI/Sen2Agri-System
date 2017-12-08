@@ -119,6 +119,12 @@ if __name__ == '__main__':
                                    'MTD_ALL.xml', 
                                    'EDG_R1.tif')
                                )
+        freVRT =  os.path.join(os.path.dirname(xml),
+                               string.replace(
+                                   os.path.basename(xml),
+                                   'MTD_ALL.xml', 
+                                   'FRE.vrt')
+                               )
     
         runCmd(["otbcli", "MaskHandler",
                 appLocation,
@@ -127,10 +133,9 @@ if __name__ == '__main__':
                 "-sentinelres", resolution])
     
         counterString = str(i)
-        mod=outL3AFile.replace("#", counterString)
-        out_w=outWeights.replace("#", counterString)
-        out_r=outRefls.replace("#", counterString)
-        out_f=outFlags.replace("#", counterString)
+        cur_L3A_w=outWeights.replace("#", counterString)
+        cur_L3A_refl=outRefls.replace("#", counterString)
+        cur_L3A_flag=outFlags.replace("#", counterString)
         
         out_w_Aot=outWeightAotFile.replace("#", counterString)
         out_w_Cloud=outWeightCloudFile.replace("#", counterString)
@@ -142,7 +147,6 @@ if __name__ == '__main__':
                 "-bmap", bandsMap,
                 "-res", resolution,
                 "-msk", outMasks,
-                "-outres", outImgBands,
                 "-outcmres", outCld,
                 "-outwmres", outWat,
                 "-outsmres", outSnow,
@@ -178,35 +182,41 @@ if __name__ == '__main__':
         if (i==0):
             runCmd(["otbcli", "UpdateSynthesisS2",
                     appLocation,
-                    "-cl2arefl", outImgBands,
+                    "-cl2arefl", freVRT,
                     "-cl2acsm", outCld,
                     "-cl2awm", outWat,
                     "-cl2asm", outSnow,
                     "-cl2aw", out_w_Total,
                     "-cl2aedg", edgMask,
                     "-bluebandidx", "0",
-                    "-cl3arefl", out_r,
-                    "-cl3aflag", out_f,
-                    "-cl3aw", out_w])
+                    "-cl3arefl", cur_L3A_refl,
+                    "-cl3aflag", cur_L3A_flag,
+                    "-cl3aw", cur_L3A_w])
         else:
-            tmpOut_w = out_w
-            tmpOut_r = out_r
-            tmpOut_f = out_f
             runCmd(["otbcli", "UpdateSynthesisS2",
                     appLocation,
-                    "-cl2arefl", outImgBands,
+                    "-cl2arefl", freVRT,
                     "-cl2acsm", outCld,
                     "-cl2awm", outWat,
                     "-cl2asm", outSnow,
                     "-cl2aw", out_w_Total,
                     "-cl2aedg", edgMask,
                     "-bluebandidx", "0",
-                    "-cl3arefl", out_r,
-                    "-cl3aflag", out_f,
-                    "-cl3aw", out_w,
-                    "-pl3aw", tmpOut_w,
-                    "-pl3arefl", tmpOut_f,
-                    "-pl3aflag", tmpOut_r])
+                    "-cl3arefl", cur_L3A_refl,
+                    "-cl3aflag", cur_L3A_flag,
+                    "-cl3aw", cur_L3A_w,
+                    "-pl3aw", prev_L3A_w,
+                    "-pl3arefl", prev_L3A_refl,
+                    "-pl3aflag", prev_L3A_flag])
+        
+        prev_L3A_w = cur_L3A_w
+        prev_L3A_refl = cur_L3A_refl
+        prev_L3A_flag = cur_L3A_flag
+        
+        # Clean
+        os.remove(out_w_Aot)
+        os.remove(out_w_Cloud)
+        os.remove(out_w_Total)
         
         i += 1
     

@@ -65,8 +65,8 @@ private:
         AddParameter(ParameterType_String, "msk", "Image with 3 bands with cloud, water and snow masks");
         AddParameter(ParameterType_InputFilename, "bmap", "Master to secondary bands mapping");
 
-        AddParameter(ParameterType_OutputImage, "outres", "Out Image at the original resolution");
-        MandatoryOff("outres");
+        //AddParameter(ParameterType_OutputImage, "outres", "Out Image at the original resolution");
+        //MandatoryOff("outres");
         AddParameter(ParameterType_OutputImage, "outcmres", "Out cloud mask image at the original  resolution");
         MandatoryOff("outcmres");
         AddParameter(ParameterType_OutputImage, "outwmres", "Out water mask image at the original  resolution");
@@ -86,7 +86,7 @@ private:
         SetDocExampleParameterValue("msk", "/path/to/msks.tif");
         SetDocExampleParameterValue("allinone", "1");
 
-        SetDocExampleParameterValue("outres", "/path/to/output_image.tif");
+        //SetDocExampleParameterValue("outres", "/path/to/output_image.tif");
         SetDocExampleParameterValue("outcmres", "/path/to/output_image_cloud.tif");
         SetDocExampleParameterValue("outwmres", "/path/to/output_image_water.tif");
         SetDocExampleParameterValue("outsmres", "/path/to/output_image_snow.tif");
@@ -134,9 +134,9 @@ private:
             ImageType2::Pointer snowImg = m_resampleAtS2Res.GetResampledSnowMaskImg().GetPointer();
             m_dirCorr.Init(res, inXml, scatCoeffsFile, cldImg, watImg, snowImg, anglesImg, ndviImg);
             m_dirCorr.DoExecute();
-            SetParameterOutputImage("outres", m_dirCorr.GetCorrectedImg().GetPointer());
+            //SetParameterOutputImage("outres", m_dirCorr.GetCorrectedImg().GetPointer());
         } else {
-            SetParameterOutputImage("outres", m_resampleAtS2Res.GetResampledMainImg());
+            //SetParameterOutputImage("outres", m_resampleAtS2Res.GetResampledMainImg());
         }
         SetParameterOutputImage("outcmres", m_resampleAtS2Res.GetResampledCloudMaskImg().GetPointer());
         SetParameterOutputImage("outwmres", m_resampleAtS2Res.GetResampledWaterMaskImg().GetPointer());
